@@ -10,4 +10,7 @@ block content
           li= message.user
           p #{message.text}
           p #{message.createdAt}
+          <form method= "POST" action= '/delete/#{message._id}'>
+          <button type=submit>Delete</button>
+          </form>
   

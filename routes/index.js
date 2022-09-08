@@ -2,41 +2,25 @@ const { response } = require('express');
 var express = require('express');
 var router = express.Router();
 const Message = require('../models/Message');
-const messages = [
-  {
-    text: "Hi there!",
-    user: "Amando",
-    added: new Date()
-  },
-  {
-    text: "Hello World!",
-    user: "Charles",
-    added: new Date()
-  }
-];
 
-
-/* GET home page. */
+//on homepage, get messages
 router.get('/', async function(req, res) {
     try{
       const message = await Message.find()
-      
       res.render('index', {title: "Mini Message Board", messages:message})
     } catch(err) {
       res.status(500).json({message:err.message})
     }
 })
-
 // form for creating new messages
 router.get('/new', (req,res,next)=> {
   res.render('form', {title:"Create New Message" })
 })
-//handle post req
+//handle post request on submit of new message
 router.post('/new', (req,res)=> {
   const message = new Message({
     text: req.body.message, 
     user: req.body.name, 
-
   });
   try {
     //save message
@@ -46,33 +30,52 @@ router.post('/new', (req,res)=> {
   } catch (err) {
     res.status(400).json({message:err.message})
   }
-  
 })
+//get by id
+router.get('/getOne/:id', async (req, res) => {
+  try{
+    const message = await Message.findById(req.params.id)
+    res.json(message)
 
-
+  } catch (error) {
+    res.status(500).json({error:error.message})
+  }
+})
 //Post Method
 router.post('/post', (req, res) => {
   res.send('Post API')
 })
-
 //Get all Method
 router.get('/getAll', (req, res) => {
   res.send('Get All API')
 })
 
-//Get by ID Method
-router.get('/getOne/:id', (req, res) => {
-  res.send(req.params.id)
-})
 
 //Update by ID Method
-router.patch('/update/:id', (req, res) => {
-  res.send('Update by ID API')
-})
+router.patch('/update/:id', async (req, res) => {
+  try {
+        const id = req.params.id;
+        const updatedMessage = req.params.message;
+        const options = {new:true}
+        const update = await Message.findByIdAndUpdate (
+          id, updatedMessage, options
+        )
+        res.send(update);
+  }
+  catch(error) {
+    res.status(400).json({error:error.message})
+  }
+});
 
 //Delete by ID Method
-router.delete('/delete/:id', (req, res) => {
-  res.send('Delete by ID API')
-})
+router.post('/delete/:id', async (req, res) => {
+  try {
+    const id = req.params.id
+   const message = await Message.findByIdAndDelete(id)
+   res.send(`Document with ${message.user} has been deleted`)
+  } catch (error) {
+    res.status(400).json({error:error.message})
+  }
+});
 
 module.exports = router;
