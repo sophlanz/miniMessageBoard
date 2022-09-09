@@ -41,26 +41,21 @@ router.get('/getOne/:id', async (req, res) => {
     res.status(500).json({error:error.message})
   }
 })
-//Post Method
-router.post('/post', (req, res) => {
-  res.send('Post API')
-})
-//Get all Method
-router.get('/getAll', (req, res) => {
-  res.send('Get All API')
-})
 
 
 //Update by ID Method
 router.patch('/update/:id', async (req, res) => {
   try {
         const id = req.params.id;
-        const updatedMessage = req.params.message;
+        const updatedMessage = {
+          text:req.body.newMessage,
+          user:req.body.newName
+        }
         const options = {new:true}
         const update = await Message.findByIdAndUpdate (
           id, updatedMessage, options
         )
-        res.send(update);
+        res.redirect("/");
   }
   catch(error) {
     res.status(400).json({error:error.message})

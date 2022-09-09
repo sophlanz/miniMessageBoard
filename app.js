@@ -23,6 +23,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//override method for submit form request "patch"
+var methodOverride = require('method-override')
+app.use(methodOverride('_method'))
+
+//routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 

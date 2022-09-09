@@ -1,6 +1,7 @@
 extends layout
 
 block content
+
   h1= title
   p Welcome to #{title}
   <a href="/new">New Message</a>
@@ -11,6 +12,19 @@ block content
           p #{message.text}
           p #{message.createdAt}
           <form method= "POST" action= '/delete/#{message._id}'>
-          <button type=submit>Delete</button>
+          <button type="submit">Delete</button>
           </form>
-  
+          <form method = "POST" action>
+          <button type="submit">Edit</button>  
+          </form>
+          <form method="POST" action= '/update/#{message._id}?_method=PATCH'>
+          <label for= "newMessage">New Message:
+          <input name= "newMessage" id= "newMessage" type= "text"></input>
+          <label>
+          <label for= "newName">New Name:
+          <input name= "newName" id= "newName" type= "text"></input>
+          <label>
+          <button type="submit">Submit</button>
+          <form>
+
+          
