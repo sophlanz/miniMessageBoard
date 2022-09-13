@@ -2,11 +2,20 @@ const { response } = require('express');
 var express = require('express');
 var router = express.Router();
 const Message = require('../models/Message');
+const passport = require('passport');
 
+function isAuth (req, res, next)  {
+  if( req.isAuthenticated() ) {
+      return next();
+  } else {
+      res.redirect('/login')
+  }
+};
 //on homepage, get messages
-router.get('/', async function(req, res) {
+router.get('/messages' , isAuth,  async function(req, res) {
     try{
       const message = await Message.find()
+      
       res.render('index', {title: "Mini Message Board", messages:message})
     } catch(err) {
       res.status(500).json({message:err.message})
@@ -41,8 +50,6 @@ router.get('/getOne/:id', async (req, res) => {
     res.status(500).json({error:error.message})
   }
 })
-
-
 //Update by ID Method
 router.patch('/update/:id', async (req, res) => {
   try {
@@ -52,7 +59,7 @@ router.patch('/update/:id', async (req, res) => {
           user:req.body.newName
         }
         const options = {new:true}
-        const update = await Message.findByIdAndUpdate (
+        await Message.findByIdAndUpdate (
           id, updatedMessage, options
         )
         res.redirect("/");
@@ -61,7 +68,6 @@ router.patch('/update/:id', async (req, res) => {
     res.status(400).json({error:error.message})
   }
 });
-
 //Delete by ID Method
 router.post('/delete/:id', async (req, res) => {
   try {
@@ -72,5 +78,6 @@ router.post('/delete/:id', async (req, res) => {
     res.status(400).json({error:error.message})
   }
 });
+
 
 module.exports = router;
